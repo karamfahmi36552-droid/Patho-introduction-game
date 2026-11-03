@@ -1,0 +1,763 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>نوبة الباثولوجي</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+/* Layout: one column, phone first. A dark heart-monitor strip sits above a patient file; the monitor is the one bold element, everything else stays quiet. */
+:root{
+  --bg:#e8eff0; --surface:#f7fafa; --surface2:#dce8ea; --ink:#0d2329; --muted:#4a666c; --line:#c3d5d8;
+  --accent:#07757c; --accent-ink:#ffffff;
+  --ok:#177a48; --ok-bg:#dff1e7; --warn:#99600a; --warn-bg:#fbefd5; --bad:#b3342b; --bad-bg:#f9e0dd;
+  --mon-bg:#071418; --mon-line:#4be3a5; --mon-warn:#f2b84b; --mon-bad:#ff6b5e; --mon-dim:#2d5b57; --mon-fg:#bfe9df;
+  --f-display:'Reem Kufi','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Arabic',system-ui,'Segoe UI',Tahoma,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#081519; --surface:#10242a; --surface2:#17323a; --ink:#e3eff0; --muted:#93b3b8; --line:#23424a;
+    --accent:#3fc4c9; --accent-ink:#05181b;
+    --ok:#52d18f; --ok-bg:#12362a; --warn:#f0b85a; --warn-bg:#3a2d12; --bad:#ff8176; --bad-bg:#3d1a18;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#081519; --surface:#10242a; --surface2:#17323a; --ink:#e3eff0; --muted:#93b3b8; --line:#23424a;
+  --accent:#3fc4c9; --accent-ink:#05181b;
+  --ok:#52d18f; --ok-bg:#12362a; --warn:#f0b85a; --warn-bg:#3a2d12; --bad:#ff8176; --bad-bg:#3d1a18;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.65;
+  padding-block:14px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.app{max-width:560px; margin:0 auto; display:flex; flex-direction:column; gap:14px; min-width:0}
+.en{font-family:var(--f-mono); font-size:.9em; font-weight:500; unicode-bidi:isolate; direction:ltr}
+h1,h2,h3{font-family:var(--f-display); font-weight:700; line-height:1.3; margin:0; text-wrap:balance}
+p{margin:0}
+button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+.bar{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.brand{font-family:var(--f-display); font-weight:700; font-size:1.05rem; letter-spacing:.01em}
+.lvl{font-size:.8rem; color:var(--muted); border:1px solid var(--line); padding:2px 10px; border-radius:99px; white-space:nowrap}
+
+.btn{display:block; width:100%; min-height:52px; border:0; border-radius:10px; padding:12px 16px; font-weight:600; font-size:1rem;
+  background:var(--accent); color:var(--accent-ink); text-align:center}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line)}
+.btn:active{transform:scale(.99)}
+.row2{display:flex; gap:10px; flex-wrap:wrap}
+.row2 > *{flex:1 1 140px; min-width:0}
+
+/* Home */
+.hero{display:flex; flex-direction:column; gap:10px; padding:6px 0 2px}
+.hero h1{font-size:2.1rem}
+.hero p{color:var(--muted); max-width:46ch}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:0}
+.stat b{font-family:var(--f-mono); font-size:1.35rem; font-weight:500; font-variant-numeric:tabular-nums; line-height:1.3}
+.stat span{font-size:.78rem; color:var(--muted); line-height:1.3}
+.sec-title{font-family:var(--f-display); font-size:1.05rem; margin-top:4px}
+.topics{display:flex; flex-direction:column; gap:6px; padding:0; margin:0; list-style:none}
+.topic{width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; text-align:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:10px 12px; min-height:48px}
+.topic .tt{min-width:0; flex:1}
+.topic small{display:block; color:var(--muted); font-size:.78rem; line-height:1.4}
+.dots{display:flex; gap:4px; flex:none}
+.dots i{width:10px; height:10px; border-radius:50%; background:var(--surface2); border:1px solid var(--line)}
+.dots i.on{background:var(--accent); border-color:var(--accent)}
+.dots.done i.on{background:var(--ok); border-color:var(--ok)}
+.reset{align-self:flex-start; background:none; border:0; color:var(--muted); text-decoration:underline; padding:8px 0; font-size:.85rem}
+
+/* Lesson */
+.card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.kicker{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; color:var(--muted); text-transform:uppercase}
+.lesson h2{font-size:1.5rem}
+.lesson ul{margin:0; padding-inline-start:1.2rem; display:flex; flex-direction:column; gap:8px}
+.tip{background:var(--surface2); border-radius:8px; padding:10px 12px; font-size:.95rem}
+.tip b{font-weight:600}
+
+/* Case */
+.mon{background:var(--mon-bg); color:var(--mon-fg); border-radius:12px; padding:10px 12px 6px; overflow:hidden; direction:ltr}
+.mon-top{display:flex; justify-content:space-between; align-items:baseline; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; color:var(--mon-dim)}
+.mon-top .hr{color:var(--mon-line)}
+.mon-top .hr b{font-size:1.5rem; font-weight:500; font-variant-numeric:tabular-nums}
+.ecg{display:block; width:100%; height:56px; overflow:hidden}
+.ecg path{fill:none; stroke:var(--mon-line); stroke-width:2; stroke-linejoin:round; stroke-linecap:round}
+.ecg .track{animation:beat .8s linear infinite}
+@keyframes beat{from{transform:translateX(0)} to{transform:translateX(-100px)}}
+.mon[data-s="harm"] .ecg .track{animation-duration:.42s}
+.mon[data-s="harm"] .ecg path, .mon[data-s="harm"] .hr{stroke:var(--mon-warn); color:var(--mon-warn)}
+.mon[data-s="dead"] .ecg .track{animation:none}
+.mon[data-s="dead"] .ecg path{stroke:var(--mon-bad)}
+.mon[data-s="dead"] .hr{color:var(--mon-bad)}
+.mon[data-s="none"]{display:none}
+
+.file{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.who{display:flex; align-items:center; gap:12px}
+.av{width:44px; height:44px; border-radius:50%; background:var(--surface2); color:var(--accent); display:grid; place-items:center; font-family:var(--f-display); font-weight:700; font-size:1.2rem; flex:none}
+.who h3{font-size:1.1rem}
+.meta{font-family:var(--f-mono); font-size:.76rem; color:var(--muted); letter-spacing:.02em}
+.scene{font-size:1.02rem}
+.q{font-weight:600; font-size:1.08rem; border-top:1px dashed var(--line); padding-top:10px}
+.opts{display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none}
+.opt{width:100%; text-align:start; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-height:52px; line-height:1.5}
+.opt:not(:disabled):active{background:var(--surface2)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok); background:var(--ok-bg)}
+.opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
+.opt.dim{opacity:.55}
+.hintbtn{align-self:flex-start; background:none; border:0; color:var(--accent); text-decoration:underline; padding:6px 0; font-size:.9rem}
+.hintbox{background:var(--surface2); border-radius:8px; padding:10px 12px; font-size:.95rem}
+
+.res{display:flex; flex-direction:column; gap:12px}
+.banner{border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:4px}
+.banner h3{font-size:1.2rem}
+.banner.ok{background:var(--ok-bg); color:var(--ok)}
+.banner.harm{background:var(--warn-bg); color:var(--warn)}
+.banner.dead{background:var(--bad-bg); color:var(--bad)}
+.banner p{color:var(--ink)}
+.why{border:1px solid var(--line); background:var(--surface); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px}
+.why h4{margin:0; font-family:var(--f-display); font-size:1rem}
+.right-ans{font-size:.95rem; color:var(--muted)}
+.right-ans b{color:var(--ok); font-weight:600}
+.next-note{font-size:.88rem; color:var(--muted)}
+
+@media (prefers-reduced-motion: reduce){
+  .ecg .track{animation:none !important}
+  .btn:active{transform:none}
+}
+</style>
+<div class="app" id="app" dir="rtl" lang="ar">
+  <header class="bar">
+    <div class="brand">نوبة الباثولوجي</div>
+    <div class="lvl" id="lvl">طبيب متدرب</div>
+  </header>
+
+  <section id="home" aria-label="الرئيسية">
+    <div class="hero">
+      <h1>إنت الدكتور المناوب</h1>
+      <p>مرضى بيوصلوك واحد ورا واحد. كل قرار بتاخده إله أثر على المريض، وبعد كل حالة بتفهم ليش. اللي بتغلط فيه بيرجعلك بحالة جديدة لحد ما تثبّته.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+    <button class="btn" id="startBtn" type="button">ابدأ النوبة</button>
+    <h2 class="sec-title">مواضيع المحاضرة</h2>
+    <ul class="topics" id="topics"></ul>
+    <button class="reset" id="resetBtn" type="button">ابدأ من الصفر</button>
+  </section>
+
+  <section id="lesson" class="lesson" hidden aria-label="الدرس"></section>
+
+  <section id="case" hidden aria-label="الحالة">
+    <div class="mon" id="mon" data-s="ok" aria-hidden="true">
+      <div class="mon-top"><span>ECG II</span><span class="hr"><b id="hrv">78</b> BPM</span></div>
+      <svg class="ecg" viewBox="0 0 400 56" preserveAspectRatio="none"><g class="track"><path id="ecgp" d=""/></g></svg>
+    </div>
+    <div id="caseBody"></div>
+  </section>
+</div>
+<script>
+const CONCEPTS=[
+{id:"intro",t:"شو هي الباثولوجي؟",k:[
+"Pathology يعني دراسة المرض (pathos معاناة، logos دراسة).",
+"General pathology: كيف الأنسجة الحية بتستجيب للإصابة، وشو بتتغير الخلايا لما تتعرض لمحفز غير طبيعي. هي العمود الفقري لفهم كل شي بعدها.",
+"Systemic (special) pathology: أمراض كل جهاز لحاله، مثل القلب والتنفس والهضم والبول والأعصاب."],
+tip:"General هي الأساس والمبدأ، وSystemic هي التطبيق على كل جهاز."},
+
+{id:"etio",t:"سبب المرض وآلية حدوثه",k:[
+"Etiology هو السبب، وبينقسم لنوعين.",
+"Predisposing factors: عوامل بتهيّئ للمرض، مثل المناعة الضعيفة بالأمراض المعدية.",
+"Exciting cause: السبب المباشر اللي بيطلق المرض، مثل عصيات السل (tubercle bacilli) بمرض السل.",
+"Pathogenesis: آلية تطور المرض، يعني تسلسل الأحداث من أول محفز لحد ما المرض بيظهر."],
+tip:"المهيّئ بيفتح الباب، والسبب المباشر هو اللي بيدخل منه."},
+
+{id:"feat",t:"التغيرات اللي بنشوفها",k:[
+"Gross features: بالعين المجردة، مثل تغير الحجم واللون والقوام. بتساعد تفرّق مثلاً بين خراج وورم.",
+"Microscopic features: بالمجهر الضوئي العادي، تغيرات داخل أو خارج الخلايا، مثل خلايا خبيثة بالسرطان أو بيض البلهارسيا.",
+"Special studies: المجهر الإلكتروني (electron microscopy) والـ immunochemistry."],
+tip:"عين مجردة، ثم مجهر عادي، ثم تقنيات خاصة. من الأبسط للأعقد."},
+
+{id:"fate",t:"المصير والتوقع",k:[
+"Fate: مسار المرض الفعلي. جيد مثل التهاب بسيط بيتراجع، وسيء مثل المضاعفات أو الوفاة.",
+"Prognosis: توقّع مسار المرض. جيد مع الالتهاب البسيط والورم الحميد، وسيء مع الورم الخبيث (cancer) وتسمم الدم (septicemia)."],
+tip:"Fate هو اللي صار فعلاً، وPrognosis هو اللي بنتوقعه."},
+
+{id:"biopsy",t:"أنواع الـ Biopsy",k:[
+"Punch biopsy: بالمنظار، مثل الجهاز الهضمي والرئة والمثانة.",
+"Core biopsy: إبرة سميكة بتوجيه سونار (US) أو CT، مثل الكبد والكلية والرئة والمنصف.",
+"Incisional biopsy: جزء من الآفة بالجراحة، مثل جزء من كتلة الثدي.",
+"Excisional biopsy: استئصال الآفة كلها، مثل كتلة الثدي كاملة.",
+"Partial organ excision: استئصال جزئي لعضو، مثل partial nephrectomy."],
+tip:"منظار هو Punch، إبرة موجّهة هي Core، جزء هو Incisional، كلها هو Excisional."},
+
+{id:"frozen",t:"Frozen أو Paraffin",k:[
+"Paraffin: بطيء. تثبيت بفورمالين 10% لمدة 24 ساعة على الأقل، ثم معالجة حوالي 24 ساعة (كحول تصاعدي، زايلين، شمع)، ثم قطع 4 إلى 5 ميكرون وصبغ H&E.",
+"Frozen section: سريع للتشخيص أثناء العملية. بدون تثبيت، تجميد بالـ cryostat خلال دقائق، وقطع 5 إلى 7 ميكرون.",
+"فايدته: تشخيص فوري، مثل كتلة ثدي أو درق حميدة ولا خبيثة لتحديد نوع الجراحة.",
+"بعض الصبغات مثل Sudan III للدهون بتحتاج frozen section طازج."],
+tip:"Frozen سريع وبدون تثبيت، وParaffin بطيء ومتقن."},
+
+{id:"cyto",t:"السيتولوجي",k:[
+"فحص سوائل أو مسحات للبحث عن خلايا غير طبيعية، مثل الخبيثة والالتهابية.",
+"أمثلة: بول، CSF، انصبابات (جنب، تامور، مفصل)، استسقاء، بلغم، إفرازات، غسيل، فرشاة، touch imprint، نخاع عظم.",
+"FNAC: سحب بإبرة رفيعة.",
+"Pap smear: مسحة عنق الرحم بصبغة Papanicolau.",
+"بعض السوائل مثل الانصباب بتحتاج طرد مركزي قبل المسح."],
+tip:"سائل أو مسحة أو إبرة رفيعة هو سيتولوجي، مش قطعة نسيج."},
+
+{id:"auto",t:"الأوتوبسي",k:[
+"Autopsy: فحص نسيج من جثة.",
+"بيكشف سبب الوفاة، وممكن يظهر مرض ما انشخّص أو انشخّص غلط، فإله دور تعليمي.",
+"لأغراض الطب الشرعي (medico legal).",
+"لتقييم حالة العضو قبل زرعه من متوفى (cadaveric transplantation).",
+"وللأبحاث."],
+tip:"أوتوبسي هو أجوبة بعد الوفاة: سبب، شرع، زرع، وعلم."},
+
+{id:"fix",t:"التثبيت والتجهيز",k:[
+"Frozen section: ما بنثبّت أبداً.",
+"Paraffin: فورمالين 10%. بعض الأنسجة بتحتاج مثبّت خاص، مثل Bouin's solution للخصية.",
+"المجهر الإلكتروني: glutaraldehyde، ثم قوالب Epon، ثم شرائح رقيقة جداً، وصبغة lead acetate.",
+"العظم: لازم decalcification (مثل حمض النتريك المخفف) ثم نكمل Paraffin.",
+"السيتولوجي: ممكن بدون تثبيت أو بكحول إيثيلي."],
+tip:"لكل فحص مثبّته: الخصية Bouin's، الإلكتروني glutaraldehyde، والعظم بنزيل منه الكلس."},
+
+{id:"cause",t:"أسباب إصابة الخلية",k:[
+"عدوى: فيروسات، ريكتسيا، بكتيريا وسمومها، فطريات وطفيليات.",
+"نقص الأكسجين (Hypoxia): إما Ischemia (نقص التروية مثل جلطة شريانية)، أو نقص التأكسج مثل فشل القلب والرئة، أو فقدان قدرة الدم على حمل الأكسجين مثل فقر الدم والتسمم بأول أكسيد الكربون.",
+"عوامل فيزيائية: رضح، حرارة، برد، إشعاع، صعقة كهربائية.",
+"عوامل كيميائية: أحماض، قلويات، كحول، معادن مثل الرصاص، أدوية.",
+"مناعية (فرط حساسية)، سوء تغذية، واضطرابات وراثية."],
+tip:"سبعة أسباب: عدوى، نقص أكسجين، فيزيائي، كيميائي، مناعي، تغذوي، وراثي."},
+
+{id:"death",t:"إصابة قابلة للرجوع أو لا",k:[
+"Reversible injury (degeneration): اضطراب بالأيض والشكل، والخلية بتقدر ترجع.",
+"Irreversible injury (موت الخلية): Necrosis هو موت بسبب مُهيّج، وApoptosis هو انتحار خلوي.",
+"الوقت بيفرق: لو انحلّ السبب بسرعة الخلية بتنجو، وإلا بتموت."],
+tip:"Necrosis قتل من برا، وApoptosis انتحار من جوا."},
+
+{id:"adapt",t:"تكيّف الخلايا",k:[
+"Atrophy: تقلّص حجم الخلية.",
+"Hypertrophy: زيادة حجم الخلية.",
+"Hyperplasia: زيادة عدد الخلايا.",
+"Metaplasia: تحوّل نوع خلية لنوع ثاني."],
+tip:"trophy للحجم، وplasia للعدد، وMeta يعني تغيير النوع."},
+
+{id:"dys",t:"خلل نمو الخلايا",k:[
+"Dysplasia: شكل الخلية شاذ.",
+"Neoplasia: تكاثر خلايا شاذة وتكوّن كتلة، وهي الورم (tumor).",
+"الورم ممكن يكون حميد (prognosis جيدة) أو خبيث (cancer، prognosis سيئة)."],
+tip:"Dysplasia للشكل، وNeoplasia للكتلة."},
+
+{id:"dep",t:"تراكمات واضطرابات وعائية",k:[
+"تراكمات داخل الخلية: دهون، بروتينات، كربوهيدرات، أصباغ. أحياناً هي سبب الإصابة وأحياناً نتيجة لها.",
+"ترسبات خارج الخلية: تكلس (calcification) وأميلويد (amyloidosis).",
+"اضطرابات وعائية: نزف (hemorrhage)، جلطة (thrombosis)، ووذمة (edema).",
+"الالتهاب (inflammation) والإصلاح (repair) كمان من نتائج الإصابة."],
+tip:"جوّا الخلية تراكم، وبرّا الخلية ترسّب، وبالأوعية اضطراب."}
+];
+const CASES=[
+/* intro */
+{c:"intro",w:"جولة الصباح",a:"",p:"قسم الباثولوجي",
+s:"رئيسة القسم د. سلمى بتسألك قدام الطلاب: «شو الفرع اللي بيدرس كيف الخلايا والأنسجة الحية بتستجيب للإصابة، وهو الأساس قبل ما ندخل بأمراض كل جهاز؟»",
+q:"شو جوابك؟",
+o:[["General pathology",1,"د. سلمى بتهز راسها: «صح، هي العمود الفقري لباقي المادة». الطلاب بيكتبوا جوابك.",0],
+["Systemic pathology",0,"د. سلمى بتقول: «لا، هاي بتدرس أمراض كل جهاز، والأساس بيجي قبلها». الطلاب بيتهامسوا وبتخسر شوي من ثقتهم فيك.",1],
+["Radiologic pathology",0,"د. سلمى بتقول: "+"«هاي مش تقسيمة الباثولوجي الأساسية». الجولة بتكمل وإنت محرج.",1]],
+y:"General pathology بتدرس كيف الخلايا والأنسجة بتتغير لما تتعرض لمحفزات غير طبيعية، وهي الأساس لفهم الباقي. Systemic بتدرس أمراض الأجهزة."},
+
+{c:"intro",w:"جولة الصباح",a:"",p:"قسم الباطنة",
+s:"طالب بيسألك: «لما ندرس أمراض القلب لحالها، وبعدها الجهاز التنفسي، وبعدها الهضمي والبولي والأعصاب، شو بنسمي هالقسم من الباثولوجي؟»",
+q:"شو بتجاوبه؟",
+o:[["Systemic (special) pathology",1,"الطالب بيسجّل الجواب وبيفهم الفرق بين العام والخاص.",0],
+["General pathology",0,"الطالب بيخلط بين الفرعين، وبيغلط بالامتحان بنفس السؤال.",1],
+["Etiology",0,"الطالب بيحتار، لأن هاي كلمة عن الأسباب مش عن تقسيم الباثولوجي.",1]],
+y:"Systemic أو special pathology هي دراسة الأمراض اللي بتصيب الأجهزة المختلفة: قلب، تنفس، هضم، بول، أعصاب."},
+
+/* etio */
+{c:"etio",w:"أبو محمود",a:"52",p:"قسم الصدر",
+s:"سعال مزمن وفقدان وزن وتعرّق ليلي. مناعته ضعيفة وعنده سوء تغذية. فحص البلغم بيّن عصيات السل (tubercle bacilli). الفريق بيسأل عن السبب المباشر للمرض.",
+q:"شو هو الـ Exciting cause؟",
+o:[["عصيات السل",1,"بتبدأ العلاج المضاد للسل وبتحسّن تغذيته. بعد أسابيع بيبلّش يتحسن.",0],
+["المناعة الضعيفة",0,"بتركّز على تقوية مناعته وما بتعالج العصيات. المرض بيتقدم وحالته بتسوء.",1],
+["سوء التغذية",0,"بتصرف عليه مكملات غذائية بس، والعدوى ما بتنعالج. صحته بتتدهور بسرعة.",2]],
+y:"السبب المباشر (Exciting cause) هو العامل اللي بيطلق المرض، وهون عصيات السل. المناعة الضعيفة وسوء التغذية عوامل مهيّئة (Predisposing)."},
+
+{c:"etio",w:"ريم",a:"30",p:"عيادة الأمراض المعدية",
+s:"ريم بتسألك بقلق: «شو اللي صار جوّا جسمي خطوة بخطوة، من أول ما انتقلت العدوى لحد ما ظهرت الأعراض؟»",
+q:"شو اسم هذا التسلسل؟",
+o:[["Pathogenesis",1,"بتشرحلها الخطوات وهي بترتاح وبتلتزم بالعلاج.",0],
+["Etiology",0,"بتحكيلها بس عن السبب. هي بتضل مش فاهمة وبتقطع المتابعة.",1],
+["Prognosis",0,"بتتوقعلها المستقبل، لكن سؤالها كان عن اللي صار. بتفقد ثقتها فيك.",1]],
+y:"Pathogenesis هي آلية تطور المرض، يعني تسلسل الأحداث من أول محفز لحد ظهور المرض. Etiology هو السبب، وPrognosis هو التوقع."},
+
+/* feat */
+{c:"feat",w:"سناء",a:"38",p:"غرفة العمليات",
+s:"جراح بيفتح كتلة بالثدي بحجم 4 سم. شكلها محتقن وساخن وفيها سائل. بدّه يفرق بين خراج وورم قبل ما يكمل.",
+q:"أي نوع من التغيرات بيفيده هون بسرعة؟",
+o:[["Gross features (بالعين المجردة)",1,"بيلاحظ الحجم واللون والقوام وبيفرّق بين الخراج والورم. بيختار الإجراء المناسب.",0],
+["Electron microscopy",0,"النتيجة بتاخد أيام ومش متوفرة بالعملية. الجراح بيكمل بدون تشخيص واضح.",1],
+["Immunochemistry",0,"ما بتفيد الجراح بهاللحظة، والقرار بيتأخر وبتطول العملية.",1]],
+y:"الـ Gross features هي تغيرات بالعين المجردة مثل الحجم واللون والقوام. بتساعد بالتشخيص وبالتفريق بين الآفات مثل الخراج والورم."},
+
+{c:"feat",w:"يوسف",a:"25",p:"عيادة المسالك البولية",
+s:"شاب عنده دم بالبول. عينة من المثانة وصلت للمختبر، والمطلوب تلاقي بيض البلهارسيا داخل النسيج.",
+q:"بأي مستوى من الفحص بتشوفه؟",
+o:[["Microscopic (مجهر ضوئي عادي)",1,"بتشوف البيض بالنسيج. تشخيص بلهارسيا وبيبدأ العلاج فوراً.",0],
+["Gross (بالعين المجردة)",0,"ما بتشوف إشي بالعين. التشخيص بيضل غير محدد وبيتأخر العلاج.",1],
+["Radiologic",0,"الأشعة بتوري المثانة بس ما بتأكد وجود البيض. بيتأخر التشخيص.",1]],
+y:"Microscopic features هي تغيرات خلوية أو خارج خلوية بتنشاف بالمجهر الضوئي، مثل بيض البلهارسيا أو الخلايا الخبيثة."},
+
+{c:"feat",w:"منى",a:"60",p:"مختبر الباثولوجي",
+s:"ورم نوعه مش واضح تحت المجهر العادي. لازم تحدد نوعه بدقة قبل ما الأونكولوجي يختار العلاج.",
+q:"شو بتطلب؟",
+o:[["Special studies مثل immunochemistry أو electron microscopy",1,"النوع بيتحدد بدقة، والعلاج الصح بيبدأ.",0],
+["تعيد الفحص بالعين المجردة",0,"النتيجة ما بتتغير، والعلاج بيتأخر.",1],
+["تسجّل التقرير وما تعمل شي",0,"الأونكولوجي بيعطي علاج مش مناسب، والورم بيتوسع.",2]],
+y:"Special microscopic studies، مثل electron microscopy وimmunochemistry، بتحدد نوع الآفة لما المجهر العادي ما بيكفي."},
+
+/* fate */
+{c:"fate",w:"عبير",a:"28",p:"الطوارئ",
+s:"التهاب بسيط بالحلق، وتحاليلها شبه طبيعية. أهلها قلقانين وبيسألوك: شو بتتوقع؟",
+q:"شو الـ Prognosis؟",
+o:[["جيدة، الالتهاب البسيط عادة بيتراجع",1,"الأهل بيرتاحوا وعبير بتتعافى بعد أيام.",0],
+["سيئة، لازم نتحضّر للأسوأ",0,"الأهل بينهاروا وبيطلبوا فحوصات وعلاجات ما إلها داعي.",1],
+["ما بنقدر نتوقع شي أبداً",0,"الأهل بيضلوا قلقانين وبيروحوا لدكتور ثاني.",1]],
+y:"Prognosis هو توقّع مسار المرض. الالتهاب البسيط والورم الحميد إنذارهم جيد."},
+
+{c:"fate",w:"أبو سامر",a:"67",p:"العناية المركزة",
+s:"ورم خبيث منتشر ومعه تسمم دم (septicemia). ابنه بيسألك: «شو توقعك؟»",
+q:"شو الـ Prognosis؟",
+o:[["سيئة (poor)",1,"بتصارحه بلطف، والعيلة بتقضي وقت أخير مع أبوهم وبتاخد قرارات مناسبة.",0],
+["جيدة مثل الورم الحميد",0,"العيلة بتتفاجأ بوفاته بعد أيام وبتحس إنك خدعتها.",2],
+["مثل الالتهاب البسيط، ما تقلقوا",0,"الأهل ما بيتجهّزوا، وبيتأخروا بالقرارات المهمة. بيتوفى المريض قبل ما يودّعوه.",2]],
+y:"الورم الخبيث (cancer) والتسمم الدموي (septicemia) إنذارهم سيء. Prognosis هو التوقع، وFate هو اللي بيصير فعلاً."},
+
+/* biopsy */
+{c:"biopsy",w:"أم خالد",a:"58",p:"قسم الأشعة",
+s:"السونار بيبيّن كتلة 3 سم بالكبد. الجراح ما بدّه يفتح بطنها. بدّه عينة نسيجية بإبرة سميكة موجّهة بالسونار.",
+q:"شو نوع الـ biopsy؟",
+o:[["Core biopsy",1,"العينة بتطلع بإبرة بدون جراحة، والتشخيص بيجي بعد يومين.",0],
+["Excisional biopsy",0,"جراحة كبيرة بلا داعي، وفي نزيف قوي من الكبد.",2],
+["Punch biopsy بالمنظار",0,"المنظار بيوصل جدار الجهاز الهضمي وما بيوصل الكتلة. العينة بتطلع بدون تشخيص.",1]],
+y:"Core biopsy: إبرة سميكة بتوجيه سونار أو CT، مناسبة للكبد والكلية والرئة والمنصف."},
+
+{c:"biopsy",w:"نبيل",a:"49",p:"وحدة المناظير",
+s:"منظار المعدة بيبيّن قرحة مشبوهة. بدّك عينة نسيجية منها.",
+q:"شو بتاخد؟",
+o:[["Punch biopsy (endoscopic)",1,"عينة صغيرة بنفس المنظار وبدون جراحة.",0],
+["Excisional biopsy بفتح البطن",0,"جراحة كبيرة بلا داعي، وبتعرّضه لمضاعفات.",1],
+["Core biopsy بالـ CT",0,"إجراء أصعب وأخطر بلا داعي، لأن المنظار موجود وبيوصل للقرحة.",1]],
+y:"Punch biopsy بتتاخد بالمنظار (endoscopic biopsy) من الجهاز الهضمي والرئة والمثانة."},
+
+{c:"biopsy",w:"هديل",a:"34",p:"العيادة الجراحية",
+s:"كتلة صغيرة بالثدي (1.5 سم) واضحة الحدود. الجراح بدّه يشيلها كلها وتنبعت للتشخيص.",
+q:"شو اسم هذا الإجراء؟",
+o:[["Excisional biopsy",1,"الكتلة بتنشال كاملة وبينعمل لها فحص شامل.",0],
+["Incisional biopsy",0,"بتاخد جزء بس وبتترك باقي الكتلة، وبتتأخر المعالجة الكاملة.",1],
+["Core biopsy",0,"بتاخد خيط نسيج وما بتشيل الكتلة. بيتأخر القرار العلاجي.",1]],
+y:"Excisional biopsy هو استئصال الآفة كلها. Incisional هو أخذ جزء منها فقط."},
+
+/* frozen */
+{c:"frozen",w:"ليلى",a:"41",p:"غرفة العمليات 2",
+s:"الجراح بيستأصل عقدة من الغدة الدرقية والمريضة تحت التخدير. بيسأل: «حميدة ولا خبيثة؟ لازم أقرر نوع الجراحة هلأ».",
+q:"شو بتعمل؟",
+o:[["Frozen section",1,"بعد دقائق بتعطي الجواب. الجراح بيكمل الجراحة المناسبة بنفس العملية.",0],
+["تثبّتها بالفورمالين وتعملها Paraffin",0,"بتاخد يومين. المريضة بتطلع بدون جواب وبتحتاج عملية ثانية وتخدير جديد.",1],
+["Cytology من البلغم",0,"ما إلها علاقة بالعقدة. الجراح بيقرر بدون تشخيص وبيغلط بنوع الجراحة.",1]],
+y:"Frozen section بيستخدم للتشخيص السريع أثناء العملية، مثل تحديد كتلة ثدي أو درق حميدة ولا خبيثة لاختيار نوع الجراحة."},
+
+{c:"frozen",w:"سمير",a:"55",p:"مختبر الباثولوجي",
+s:"كبد المريض مشتبه فيه بتراكم دهون. بدّك تثبت وجودها بصبغة Sudan III.",
+q:"كيف بتجهّز العينة؟",
+o:[["Frozen section طازج",1,"الدهون بتبين بصبغة Sudan III، والتشخيص بيتأكد.",0],
+["Paraffin مع H&E",0,"الكحول والزايلين بيذوّبوا الدهون وما بتبين. التشخيص بيفوتك.",1],
+["فورمالين ثم Paraffin ثم Sudan III",0,"الدهون بتكون اتذوّبت بخطوات المعالجة، والصبغة ما بتبين شي.",1]],
+y:"بعض الصبغات، مثل Sudan III للدهون، بتحتاج frozen section طازج ولا بتنفع على شرائح الParaffin."},
+
+/* cyto */
+{c:"cyto",w:"أبو عمر",a:"63",p:"قسم الصدر",
+s:"مدخن قديم عنده ماء بالجنب (pleural effusion). بدّك تفحص إذا في خلايا خبيثة بدون جراحة.",
+q:"شو الفحص المناسب؟",
+o:[["Cytology: سحب السائل وطرده مركزياً ثم مسحه على شريحة",1,"بتلاقي خلايا خبيثة وبتبدأ الخطة العلاجية بدون جراحة.",0],
+["Excisional biopsy للرئة",0,"جراحة كبيرة على مريض ضعيف، وحالته بتتعقّد.",2],
+["تستنى وتشوف التطور",0,"بتضيّع وقت والمرض بينتشر.",1]],
+y:"Cytology بتفحص سوائل الجسم مثل الانصبابات (جنب، تامور، مفصل) للبحث عن خلايا خبيثة. غالباً بنحتاج طرد مركزي قبل المسح."},
+
+{c:"cyto",w:"رنا",a:"35",p:"عيادة النسائية",
+s:"فحص دوري. بدّك تكشف مبكراً أي خلايا غير طبيعية بعنق الرحم.",
+q:"شو الأنسب؟",
+o:[["Pap smear (مسحة بصبغة Papanicolau)",1,"مسحة بسيطة بدون جراحة، والنتيجة بتكشف أي تغيرات مبكرة.",0],
+["Core biopsy بالـ CT",0,"إجراء ما إله داعي لفحص دوري.",1],
+["Frozen section",0,"بدّه عملية وما بيناسب فحص دوري. التغيرات المبكرة بتفوتك.",1]],
+y:"Pap smear هي مسحة عنق الرحم المصبوغة بـ Papanicolau، وهي من أهم فحوصات السيتولوجي."},
+
+/* auto */
+{c:"auto",w:"أبو إياد",a:"47",p:"قسم الباطنة",
+s:"مريض توفي فجأة بعد 12 ساعة من دخوله، والتشخيص ما كان واضح. العيلة بدها تعرف السبب.",
+q:"شو بتعمل؟",
+o:[["Autopsy",1,"بتكتشف جلطة رئوية ما كانت مشخّصة. العيلة بتفهم السبب والفريق بيتعلم.",0],
+["Frozen section",0,"ما بتشتغل لسبب الوفاة. العيلة بتضل بدون جواب.",1],
+["Cytology من البلغم",0,"ما بتكشف سبب الوفاة. العيلة بتضل بدون جواب.",1]],
+y:"Autopsy هو فحص نسيج من جثة، وبيكشف سبب الوفاة وممكن يظهر مرض ما انشخّص أو انشخّص غلط."},
+
+{c:"auto",w:"متبرع متوفى",a:"30",p:"وحدة الزراعة",
+s:"كلية من متبرع متوفى مخصصة لمريض بحاجتها. بدّك تقيّم حالة العضو قبل الزرع.",
+q:"شو بتعمل؟",
+o:[["تفحص نسيج العضو قبل الزرع",1,"بتتأكد إنها سليمة. الزرع بينجح.",0],
+["تزرعها مباشرة بدون فحص",0,"الكلية كانت متضررة، والزرع بيفشل ومريضك بيتعرض لخطر كبير.",2],
+["تعمل Pap smear",0,"مش إله علاقة بالعضو. الكلية بتنزرع بدون تقييم.",1]],
+y:"من استخدامات الفحص بعد الوفاة: تقييم حالة العضو قبل استخدامه للزرع (cadaveric transplantation)."},
+
+/* fix */
+{c:"fix",w:"جمال",a:"33",p:"عيادة العقم",
+s:"عينة من الخصية لتقييم سبب العقم. بدّك مثبّت مناسب.",
+q:"شو بتستخدم؟",
+o:[["Bouin's solution",1,"تفاصيل الخلايا بتنحفظ وبتقدر تقيّم الخصوبة.",0],
+["بدون تثبيت",0,"النسيج بيتلف بسرعة وبتضيع العينة. بتحتاج biopsy ثانية.",1],
+["Glutaraldehyde",0,"هاد لفحص المجهر الإلكتروني. التشخيص العادي بيتأخر.",1]],
+y:"بعض الأنسجة بتحتاج مثبّت خاص، مثل Bouin's solution لخزعات الخصية. الفورمالين 10% هو المثبّت المعتاد."},
+
+{c:"fix",w:"ياسمين",a:"19",p:"قسم العظام",
+s:"كتلة بعظم الفخذ، وعينة العظم وصلت المختبر. لازم تجهّزها للقطع.",
+q:"شو بيصير قبل الشمع والقطع؟",
+o:[["Decalcification بحمض النتريك المخفف",1,"العظم بيلين وبينقطع بسهولة. التشخيص بيكون واضح.",0],
+["بتنقطع مباشرة بالميكروتوم",0,"العينة بتتكسر وبتخسرها. بتحتاج عينة ثانية.",1],
+["Frozen section فوراً",0,"مش مناسب للعظم الصلب، والنتيجة بتطلع غير واضحة.",1]],
+y:"خزعة العظم بتحتاج decalcification (مثل حمض النتريك المخفف) ثم بتتعالج للحصول على شرائح Paraffin."},
+
+{c:"fix",w:"هالة",a:"8",p:"قسم الكلى",
+s:"خزعة كلية لفحصها بالمجهر الإلكتروني.",
+q:"شو المثبّت؟",
+o:[["Glutaraldehyde",1,"التفاصيل الدقيقة جداً للخلايا بتنحفظ، وبعدها بتنعمل القوالب والشرائح.",0],
+["Bouin's solution",0,"هاد للخصية. تفاصيل المجهر الإلكتروني بتنخرب.",1],
+["بدون تثبيت",0,"النسيج بيتحلل قبل الفحص. بتحتاج خزعة جديدة لطفلة صغيرة.",1]],
+y:"للمجهر الإلكتروني: تثبيت بـ glutaraldehyde، ثم قوالب Epon، ثم شرائح رقيقة جداً، وصبغة lead acetate."},
+
+/* cause */
+{c:"cause",w:"عيلة أبو ناصر",a:"40",p:"الطوارئ",
+s:"وصلت عيلة بصداع وإغماء بعد ما نامت بغرفة فيها مدفأة فحم مسدودة. الأكسجين بالهواء طبيعي ورئاتهم سليمة.",
+q:"شو نوع الإصابة الخلوية؟",
+o:[["فقدان قدرة الدم على حمل الأكسجين (تسمم CO)",1,"بتعطيهم أكسجين نقي فوراً وبتنجو العيلة.",0],
+["Ischemia من جلطة شريانية",0,"بتدور على جلطة وبتضيّع وقت. حالتهم بتسوء.",2],
+["عدوى بكتيرية",0,"بتعطي مضادات حيوية بلا فايدة، وبتتدهور حالتهم.",2]],
+y:"من أسباب نقص الأكسجين (hypoxia): فقدان قدرة الدم على حمل الأكسجين، كما بفقر الدم والتسمم بأول أكسيد الكربون."},
+
+{c:"cause",w:"صلاح",a:"70",p:"الطوارئ",
+s:"رجل رجله باردة وشاحبة ومؤلمة فجأة. الفحص بيبيّن انسداد شريان بجلطة.",
+q:"شو سبب الإصابة الخلوية؟",
+o:[["Ischemia (نقص التروية بسبب جلطة شريانية)",1,"بتفتح الشريان بسرعة والرجل بتنجو.",0],
+["Inadequate oxygenation مثل فشل القلب والرئة",0,"بتعالج القلب والرئة وبتفوت الجلطة. الرجل بتتلف وبتنقطع.",1],
+["عامل كيميائي",0,"بتدور على سم وبتضيّع الوقت. الرجل بتتلف.",1]],
+y:"Ischemia هي نقص أو فقدان التروية الدموية، مثل الجلطة الشريانية. تختلف عن نقص التأكسج وعن فقدان قدرة الدم على حمل الأكسجين."},
+
+/* death */
+{c:"death",w:"أبو ربيع",a:"58",p:"غرفة القسطرة",
+s:"ألم بالصدر بدأ من 20 دقيقة وشريان القلب مسدود. خلايا عضلة القلب منتفخة بس لسا ما ماتت.",
+q:"شو بتقرر؟",
+o:[["تفتح الشريان فوراً، الخلايا لسا بتقدر ترجع",1,"عضلة القلب بتتعافى ونبضه بيرجع طبيعي.",0],
+["تستنى، الخلايا ماتت خلص",0,"بتضيّع الوقت، الخلايا بتموت فعلاً ويتوقف قلبه.",2],
+["تعطيه مسكن وتنتظر للصبح",0,"للصبح عضلة قلبه بتكون انتهت.",2]],
+y:"الإصابة العكوسة (reversible) بتحكمها السرعة: لو انحلّ السبب بسرعة الخلايا بتنجو، وإلا بتصير irreversible (necrosis)."},
+
+{c:"death",w:"عيد",a:"60",p:"قسم القلب",
+s:"بعد جلطة قلبية، انسد الشريان 6 ساعات وماتت خلايا من عضلة القلب بسبب نقص الأكسجين، يعني بسبب مُهيّج.",
+q:"شو نوع موت الخلايا هون؟",
+o:[["Necrosis",1,"بتوثّق الحالة بشكل صح وبتخطط للمتابعة.",0],
+["Apoptosis",0,"بتفسره كأنه انتحار خلوي طبيعي وبتقلل من خطورة الحالة. المتابعة بتتأخر.",1],
+["Atrophy",0,"بتسميه تقلص حجم، والتشخيص بيروح بطريق غلط.",1]],
+y:"Necrosis هو موت خلية سببه مُهيّج مثل نقص التروية، وApoptosis هو انتحار خلوي مبرمج."},
+
+{c:"death",w:"جنين",a:"8 أسابيع",p:"محاضرة الأجنة",
+s:"بتشرح لطلابك: غشاء الجلد بين أصابع الجنين بيختفي لأن الخلايا بتقرر بنفسها تموت بشكل مبرمج.",
+q:"شو اسم هالموت الخلوي؟",
+o:[["Apoptosis",1,"الطلاب بيفهموا إنه موت منظّم، بدون التهاب.",0],
+["Necrosis",0,"الطلاب بيفهموا غلط إنه تلف بسبب مُهيّج.",1],
+["Hypertrophy",0,"الطلاب بيحتاروا لأنها زيادة حجم مش موت.",1]],
+y:"Apoptosis هو انتحار خلوي (cell suicide)، بينما Necrosis هو موت خلية بسبب مُهيّج."},
+
+/* adapt */
+{c:"adapt",w:"أبو هيثم",a:"62",p:"عيادة القلب",
+s:"ضغط دم عالٍ من 15 سنة. الإيكو بيبيّن جدار البطين الأيسر سميك، وتحت المجهر الخلايا العضلية أكبر حجماً.",
+q:"شو هو التكيّف؟",
+o:[["Hypertrophy",1,"بتعالج الضغط وبتحميه من فشل القلب.",0],
+["Hyperplasia",0,"بتفسّره غلط وبتتأخر بعلاج الضغط، وقلبه بيضعف.",2],
+["Atrophy",0,"بتظنه ضمور وبتفوّت السبب. حالته بتسوء.",1]],
+y:"Hypertrophy هي زيادة حجم الخلية، وبتصير لما يزيد الحِمل على العضو. Hyperplasia هي زيادة عدد الخلايا."},
+
+{c:"adapt",w:"أبو سليم",a:"55",p:"عيادة الصدر",
+s:"مدخن من 30 سنة. خزعة القصبة بتبيّن إنه الخلايا العمودية تحولت لنوع حرشفي (squamous).",
+q:"شو اسم هالتغيّر؟",
+o:[["Metaplasia",1,"بتنصحه بالإقلاع عن التدخين وبتتابعه. التغيّر ممكن يرجع.",0],
+["Hyperplasia",0,"بتفوّت إنه نوع الخلية تغيّر، وهو بيكمل تدخين.",1],
+["Neoplasia",0,"بتخوّفه وبتجري إجراء جراحي لا داعي له.",1]],
+y:"Metaplasia هي تحوّل نوع خلية لنوع ثاني، مثل تحول الخلايا العمودية لحرشفية عند المدخنين."},
+
+{c:"adapt",w:"جود",a:"17",p:"قسم العظام",
+s:"بعد 6 أسابيع بالجبس، عضلة ساقه صارت أنحف بشكل واضح والخلايا العضلية أصغر حجماً.",
+q:"شو هالتغيّر؟",
+o:[["Atrophy",1,"بتبدأ علاج طبيعي، والعضلة بترجع تقوى.",0],
+["Hypertrophy",0,"بتفوّت الضمور وبتتأخر بالعلاج الطبيعي.",1],
+["Hyperplasia",0,"التشخيص غلط والعلاج بيتأخر.",1]],
+y:"Atrophy هي تقلّص حجم الخلية. بتصير مثلاً مع قلة استعمال العضو."},
+
+{c:"adapt",w:"منار",a:"32",p:"العيادة النسائية",
+s:"نزف رحمي. الخزعة بتبيّن زيادة بعدد خلايا بطانة الرحم بتأثير هرمون الإستروجين، وشكل الخلايا طبيعي.",
+q:"شو هالتغيّر؟",
+o:[["Hyperplasia",1,"بتختار العلاج الهرموني المناسب وبتتابعها.",0],
+["Hypertrophy",0,"بتسميها زيادة حجم وبتفوّت زيادة العدد. المتابعة بتتأخر.",1],
+["Dysplasia",0,"بتخوّفها بشكل غير لازم، لأن شكل الخلايا طبيعي.",1]],
+y:"Hyperplasia هي زيادة عدد الخلايا، وHypertrophy هي زيادة حجمها. بالـ dysplasia شكل الخلية هو الشاذ."},
+
+/* dys */
+{c:"dys",w:"سوزان",a:"38",p:"العيادة النسائية",
+s:"مسحة عنق الرحم بتبيّن خلايا شكلها غير طبيعي، وما في كتلة.",
+q:"شو التشخيص؟",
+o:[["Dysplasia",1,"بتتابعها وبتعالج مبكراً، وبتتجنب تحوّله لورم.",0],
+["Neoplasia",0,"بتعمل جراحة كبيرة بلا داعي.",1],
+["طبيعي، ما في شي",0,"بتفوّت التغيّر، وبعد سنوات بيتحوّل لورم خبيث.",2]],
+y:"Dysplasia هي شكل خلية شاذ بدون كتلة. Neoplasia هي تكاثر خلايا شاذة وتكوّن كتلة (tumor)."},
+
+{c:"dys",w:"مازن",a:"45",p:"قسم الجراحة",
+s:"كتلة بالقولون. الخزعة بتبيّن تكاثر خلايا شاذة مكوّنة كتلة.",
+q:"شو هو؟",
+o:[["Neoplasia (ورم)",1,"بتحدد نوعه حميد ولا خبيث وبتخطط العلاج.",0],
+["Hyperplasia",0,"بتسميه زيادة عدد خلايا طبيعية. العلاج بيتأخر والورم بينتشر.",2],
+["Atrophy",0,"بتفوّت الورم كلياً. العلاج بيتأخر.",2]],
+y:"Neoplasia هي تكاثر خلايا شاذة وتكوّن كتلة (tumor). ممكن تكون حميدة أو خبيثة."},
+
+/* dep */
+{c:"dep",w:"فادي",a:"50",p:"عيادة الكبد",
+s:"مدمن كحول. خزعة الكبد بتبيّن قطرات دهنية داخل الخلايا الكبدية.",
+q:"شو هالتغيّر؟",
+o:[["Intracellular accumulation (تراكم داخل الخلية)",1,"بتنصحه بالتوقف عن الكحول وبيتحسن كبده.",0],
+["Extracellular deposition (ترسب خارج الخلية)",0,"بتغلط بالتصنيف وبتفوّت السبب. المرض بيتطور.",1],
+["Metaplasia",0,"بتظنه تغيّر نوع خلية، والعلاج بيروح بالاتجاه الغلط.",1]],
+y:"التراكمات داخل الخلية (دهون، بروتينات، كربوهيدرات، أصباغ) ممكن تكون سبب الإصابة أو نتيجتها."},
+
+{c:"dep",w:"نوال",a:"72",p:"قسم الكلى",
+s:"خزعة بتبيّن ترسبات كلسية بين الخلايا، يعني خارج الخلية.",
+q:"شو اسمها؟",
+o:[["Extracellular deposition: calcification",1,"بتبحث عن السبب وبتعالجه.",0],
+["Intracellular accumulation",0,"بتغلط بمكان الترسب، والتشخيص بيروح بطريق غلط.",1],
+["Edema",0,"بتظنها وذمة وبتعطيها علاج غير مناسب.",1]],
+y:"الترسبات خارج الخلية تشمل التكلس (calcification) والأميلويد (amyloidosis)."},
+
+{c:"dep",w:"حسن",a:"66",p:"قسم الباطنة",
+s:"بعد رحلة طويلة، رجله منتفخة ومؤلمة، والفحص بيبيّن خثرة بتسد وريد.",
+q:"شو نوع الاضطراب الوعائي؟",
+o:[["Thrombosis (جلطة)",1,"بتبدأ مميّعات الدم وبتمنع انتقال الخثرة للرئة.",0],
+["Hemorrhage (نزف)",0,"بتعطيه علاج للنزف وما بتعالج الخثرة. الخثرة بتنتقل للرئة وبيتوفى.",2],
+["Atrophy",0,"التشخيص بيروح بطريق غلط. الخثرة بتضل وبتتحرك.",2]],
+y:"من الاضطرابات الوعائية: النزف (hemorrhage)، الجلطة (thrombosis)، والوذمة (edema)."}
+];
+(function(){
+var KEY="nawbat-patho-v1";
+function blank(){return {t:0,m:{},right:0,wrong:0,lost:0,lastC:null,lastI:null}}
+function load(){
+  try{var r=localStorage.getItem(KEY); if(r){var o=JSON.parse(r); if(o&&o.m) return o}}catch(e){}
+  return blank();
+}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(id){return document.getElementById(id)}
+
+var CMAP={}; CONCEPTS.forEach(function(c){CMAP[c.id]=c});
+var BYC={}; CASES.forEach(function(c){(BYC[c.c]=BYC[c.c]||[]).push(c)});
+function M(id){return S.m[id]||(S.m[id]={b:0,due:0,seen:0,idx:0})}
+
+/* Latin terms get their own direction so Arabic sentences keep their order */
+var LAT=/[A-Za-z][A-Za-z0-9'’\-]*(?:[\/&][A-Za-z0-9'’\-]+)*(?:\s+[A-Za-z][A-Za-z0-9'’\-]*(?:[\/&][A-Za-z0-9'’\-]+)*)*/g;
+function fmt(s){return String(s).replace(LAT,function(m){return '<bdi class="en">'+m+'</bdi>'})}
+function shuffle(a){a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t} return a}
+
+var reduce=false; try{reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+
+/* ---------- screens ---------- */
+var screens=["home","lesson","case"];
+function show(n){
+  screens.forEach(function(s){$(s).hidden=(s!==n)});
+  try{window.scrollTo(0,0)}catch(e){}
+}
+
+/* ---------- monitor ---------- */
+var BEAT="l30 0 l5 -4 l5 4 l6 0 l4 -22 l6 36 l4 -14 l10 0 l6 -6 l8 6 l16 0";
+function monitor(state){
+  var mon=$("mon"), p=$("ecgp"), hr=$("hrv");
+  mon.setAttribute("data-s",state);
+  if(state==="dead"){p.setAttribute("d","M0 28 H800"); hr.textContent="0"}
+  else{
+    var d="M0 28"; for(var i=0;i<9;i++) d+=" "+BEAT;
+    p.setAttribute("d",d);
+    hr.textContent= state==="harm" ? "134" : "78";
+  }
+}
+
+/* ---------- progress ---------- */
+function mastered(){var n=0; CONCEPTS.forEach(function(c){if(M(c.id).b>=3)n++}); return n}
+function level(){var n=mastered(); return n<2?"طبيب متدرب":n<5?"طبيب مقيم":n<9?"أخصائي":"استشاري"}
+function status(id){var m=M(id); if(!m.seen)return "جديد"; if(m.b>=3)return "متقن"; if(m.b===0)return "لسا بدّه مراجعة"; return "قيد التثبيت"}
+
+/* ---------- home ---------- */
+function renderHome(){
+  $("lvl").textContent=level();
+  $("stats").innerHTML=
+    '<div class="stat"><b>'+S.right+'</b><span>قرارات صح</span></div>'+
+    '<div class="stat"><b>'+S.wrong+'</b><span>قرارات غلط</span></div>'+
+    '<div class="stat"><b>'+S.lost+'</b><span>مرضى خسرتهم</span></div>';
+  var any=Object.keys(S.m).some(function(k){return S.m[k].seen});
+  $("startBtn").textContent= any ? "كمّل النوبة" : "ابدأ النوبة";
+  var h="";
+  CONCEPTS.forEach(function(c){
+    var m=M(c.id), dots="";
+    for(var i=0;i<3;i++) dots+='<i class="'+(i<m.b?"on":"")+'"></i>';
+    h+='<li><button class="topic" type="button" data-id="'+c.id+'"><span class="tt">'+fmt(c.t)+'<small>'+status(c.id)+'</small></span><span class="dots'+(m.b>=3?" done":"")+'" aria-hidden="true">'+dots+'</span></button></li>';
+  });
+  $("topics").innerHTML=h;
+}
+
+/* ---------- lesson ---------- */
+var pending=null, backTo="home";
+function showLesson(id,mode){
+  var c=CMAP[id], k="";
+  c.k.forEach(function(x){k+="<li>"+fmt(x)+"</li>"});
+  var btns;
+  if(mode==="pending") btns='<button class="btn" type="button" id="lsGo">فهمت، دخّلني المريض</button>';
+  else btns='<button class="btn ghost" type="button" id="lsBack">رجوع</button>';
+  $("lesson").innerHTML=
+    '<div class="card"><div class="kicker">درس قبل الحالة</div><h2>'+fmt(c.t)+'</h2><ul>'+k+'</ul>'+
+    '<div class="tip"><b>للحفظ:</b> '+fmt(c.tip)+'</div></div><div style="height:12px"></div>'+btns;
+  show("lesson");
+  var g=$("lsGo"); if(g) g.onclick=function(){var p=pending; pending=null; startCase(p)};
+  var b=$("lsBack"); if(b) b.onclick=function(){ if(backTo==="case") show("case"); else {renderHome(); show("home")} };
+}
+
+/* ---------- scheduler ---------- */
+function nextCase(){
+  var due=null;
+  CONCEPTS.forEach(function(c){
+    var m=M(c.id);
+    if(m.seen && m.due<=S.t && c.id!==S.lastC){
+      if(!due || m.due<M(due).due) due=c.id;
+    }
+  });
+  var cid=due;
+  if(!cid){
+    for(var i=0;i<CONCEPTS.length;i++){ if(!M(CONCEPTS[i].id).seen){cid=CONCEPTS[i].id;break} }
+  }
+  if(!cid){
+    var best=null;
+    CONCEPTS.forEach(function(c){
+      var m=M(c.id);
+      if(c.id===S.lastC) return;
+      if(!best || m.b<M(best).b || (m.b===M(best).b && m.due<M(best).due)) best=c.id;
+    });
+    cid=best||CONCEPTS[0].id;
+  }
+  var list=BYC[cid], m=M(cid), n=list.length, pick=list[m.idx%n];
+  if(n>1 && S.lastI===pick.c+"|"+pick.s){ m.idx++; pick=list[m.idx%n]; }
+  m.idx++;
+  return pick;
+}
+function startNext(){
+  var c=nextCase();
+  if(!M(c.c).seen){ pending=c; backTo="home"; showLesson(c.c,"pending"); }
+  else startCase(c);
+}
+
+/* ---------- case ---------- */
+var cur=null, answered=false, hinted=false;
+function startCase(c){
+  cur=c; answered=false; hinted=false; backTo="case";
+  M(c.c).seen=1; save();
+  monitor("ok");
+  $("mon").setAttribute("data-s", c.a===""?"none":"ok");
+  var opts=shuffle(c.o.map(function(o,i){return {o:o,i:i}}));
+  var who='';
+  if(c.a!==""){
+    who='<div class="who"><div class="av" aria-hidden="true">'+c.w.charAt(0)+'</div><div><h3>'+c.w+'</h3><div class="meta">'+fmt(c.a+" سنة")+' · '+c.p+'</div></div></div>';
+  } else {
+    who='<div class="who"><div class="av" aria-hidden="true">'+c.w.charAt(0)+'</div><div><h3>'+c.w+'</h3><div class="meta">'+c.p+'</div></div></div>';
+  }
+  var h='<div class="file"><div class="kicker">ملف الحالة</div>'+who+'<p class="scene">'+fmt(c.s)+'</p><p class="q">'+fmt(c.q)+'</p>';
+  h+='<ul class="opts" id="opts">';
+  opts.forEach(function(x){h+='<li><button class="opt" type="button" data-i="'+x.i+'">'+fmt(x.o[0])+'</button></li>'});
+  h+='</ul><button class="hintbtn" type="button" id="hintBtn">تلميح</button><div id="hintBox" class="hintbox" hidden></div></div><div id="resBox"></div>';
+  $("caseBody").innerHTML=h;
+  show("case");
+  $("hintBtn").onclick=function(){
+    hinted=true; $("hintBox").hidden=false; $("hintBox").innerHTML=fmt(CMAP[cur.c].tip); $("hintBtn").hidden=true;
+  };
+  var bs=$("opts").querySelectorAll(".opt");
+  for(var i=0;i<bs.length;i++) bs[i].onclick=(function(b){return function(){answer(parseInt(b.getAttribute("data-i"),10))}})(bs[i]);
+}
+
+function answer(k){
+  if(answered) return; answered=true;
+  var c=cur, o=c.o[k], ok=!!o[1], sev=o[3], m=M(c.c);
+  var bs=$("opts").querySelectorAll(".opt");
+  for(var i=0;i<bs.length;i++){
+    var idx=parseInt(bs[i].getAttribute("data-i"),10);
+    bs[i].disabled=true;
+    if(c.o[idx][1]) bs[i].classList.add("right");
+    else if(idx===k) bs[i].classList.add("wrong");
+    else bs[i].classList.add("dim");
+  }
+  $("hintBtn").hidden=true;
+
+  var gap;
+  if(ok){
+    S.right++;
+    if(!hinted) m.b=Math.min(3,m.b+1);
+    gap= hinted ? 3 : (m.b===1?4:m.b===2?8:14);
+  } else {
+    S.wrong++; m.b=0; gap=3;
+    if(sev===2) S.lost++;
+  }
+  m.due=S.t+gap; S.t++; S.lastC=c.c; S.lastI=c.c+"|"+c.s;
+  save();
+
+  var patient=c.a!=="";
+  var st= sev===0?"ok": sev===1?"harm":"dead";
+  var title, cls;
+  if(sev===0){cls="ok"; title= patient?"المريض بخير":"قرار صح"}
+  else if(sev===1){cls="harm"; title= patient?"تدهورت حالة المريض":"قرار غلط"}
+  else{cls="dead"; title= patient?"توفي المريض":"قرار غلط وخسارة كبيرة"}
+  if(patient) monitor(st);
+
+  var right=""; if(!ok){ var ro=c.o.filter(function(x){return x[1]})[0]; right='<p class="right-ans">الجواب الصح: <b>'+fmt(ro[0])+'</b></p>'; }
+  var note= ok ? (m.b>=3 ? "هالموضوع صار متقن. رح أراجعك فيه بعد فترة." : "رح أرجّعلك هالموضوع بحالة ثانية لاحقاً عشان يثبت.")
+               : "ما تقلق، الغلط جزء من الحفظ. رح يرجعلك هالموضوع بعد حالتين تقريباً.";
+  var h='<div class="res"><div class="banner '+cls+'"><h3>'+title+'</h3><p>'+fmt(o[2])+'</p></div>'+
+    '<div class="why"><h4>ليش؟</h4><p>'+fmt(c.y)+'</p>'+right+'</div>'+
+    '<p class="next-note">'+note+'</p>'+
+    '<div class="row2"><button class="btn ghost" type="button" id="rvBtn">راجع الدرس</button><button class="btn" type="button" id="nxBtn">المريض التالي</button></div></div>';
+  $("resBox").innerHTML=h;
+  $("rvBtn").onclick=function(){backTo="case"; showLesson(c.c,"view")};
+  $("nxBtn").onclick=startNext;
+  try{$("resBox").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})}catch(e){}
+  $("lvl").textContent=level();
+}
+
+/* ---------- wiring ---------- */
+$("startBtn").onclick=startNext;
+$("topics").onclick=function(e){
+  var b=e.target.closest?e.target.closest(".topic"):null; if(!b) return;
+  backTo="home"; showLesson(b.getAttribute("data-id"),"view");
+};
+var rt=null;
+$("resetBtn").onclick=function(){
+  var b=$("resetBtn");
+  if(rt){ clearTimeout(rt); rt=null; S=blank(); save(); b.textContent="ابدأ من الصفر"; renderHome(); return; }
+  b.textContent="اضغط مرة ثانية للتأكيد، وبيضيع كل تقدمك";
+  rt=setTimeout(function(){rt=null; b.textContent="ابدأ من الصفر"},4000);
+};
+
+monitor("ok");
+renderHome(); show("home");
+})();
+</script>
+
+</body></html>
